@@ -30,7 +30,12 @@ async function uploadImageFromUrl(url, folder = 'gwino-seed') {
 async function seed() {
   await connectDB();
 
-  const localesDir = path.resolve(__dirname, '../../src/locales');
+  const localesDir = path.resolve(__dirname, '../src/locales');
+  if (!fs.existsSync(localesDir)) {
+    console.error('Locales directory not found:', localesDir);
+    console.error('Create a "src/locales" directory with JSON files to seed, or adjust the path in scripts/seed.js');
+    process.exit(1);
+  }
   const files = fs.readdirSync(localesDir).filter(f => f.endsWith('.json'));
 
   // Clear existing tours/destinations (optional)
