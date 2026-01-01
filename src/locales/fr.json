@@ -1,0 +1,21 @@
+{
+  "tours": {
+    "featuredTours": {
+      "musanze-gorilla-trek": {
+        "title": "Trek des gorilles à Musanze",
+        "description": "Vivez le trekking des gorilles dans le parc national des Volcans.",
+        "duration": "2 jours",
+        "price": "350$",
+        "image": null
+      }
+    }
+  },
+  "destinations": {
+    "musanze": {
+      "name": "Musanze",
+      "description": "Porte d'entrée du parc national des Volcans",
+      "longDescription": "Musanze abrite les gorilles de montagne et offre des paysages volcaniques spectaculaires.",
+      "activities": ["Trekking des gorilles", "Visites culturelles"]
+    }
+  }
+}

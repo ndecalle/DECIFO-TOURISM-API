@@ -48,6 +48,8 @@ async function seed() {
     const raw = fs.readFileSync(filePath, 'utf-8');
     const data = JSON.parse(raw);
 
+    const localeTag = path.basename(file, '.json');
+
     // Seed featuredTours under tours.featuredTours if present
     if (data.tours && data.tours.featuredTours) {
       const featured = data.tours.featuredTours;
@@ -57,9 +59,13 @@ async function seed() {
         if (item && item.title) {
           const imageUrl = item.image || item.img || item.photo || null;
           const uploaded = imageUrl ? await uploadImageFromUrl(imageUrl) : (item.image || null);
+          if (!uploaded) {
+            console.warn('Skipping tour (no image):', item.title || key);
+            continue;
+          }
           const tour = new Tour({
             title: item.title,
-            slug: (item.title || key).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            slug: ((item.title || key).toLowerCase().replace(/[^a-z0-9]+/g, '-')) + '-' + localeTag,
             description: item.description || item.shortDescription || '',
             duration: item.duration || '',
             priceText: item.price || '',
@@ -79,9 +85,13 @@ async function seed() {
         if (item && item.name) {
           const img = item.image || null;
           const uploaded = img ? await uploadImageFromUrl(img) : null;
+          if (!uploaded) {
+            console.warn('Skipping destination (no image):', item.name || key);
+            continue;
+          }
           const dest = new Destination({
             name: item.name,
-            slug: (item.name || key).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            slug: ((item.name || key).toLowerCase().replace(/[^a-z0-9]+/g, '-')) + '-' + localeTag,
             shortDescription: item.description || '',
             longDescription: item.longDescription || item.description || '',
             activities: item.activities || [],

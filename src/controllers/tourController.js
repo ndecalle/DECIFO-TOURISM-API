@@ -1,8 +1,23 @@
 const Tour = require('../models/Tour');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
 exports.createTour = async (req, res, next) => {
   try {
-    const tour = new Tour(req.body);
+    const data = { ...req.body };
+    // if a file was uploaded directly with the tour, upload to Cloudinary
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream({ folder: 'tours' }, (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        });
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+      data.image = uploadResult.secure_url;
+    }
+
+    const tour = new Tour(data);
     await tour.save();
     res.status(201).json(tour);
   } catch (err) {
@@ -37,7 +52,19 @@ exports.getTour = async (req, res, next) => {
 
 exports.updateTour = async (req, res, next) => {
   try {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const data = { ...req.body };
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream({ folder: 'tours' }, (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        });
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+      data.image = uploadResult.secure_url;
+    }
+
+    const tour = await Tour.findByIdAndUpdate(req.params.id, data, { new: true });
     if (!tour) return res.status(404).json({ message: 'Not found' });
     res.json(tour);
   } catch (err) {

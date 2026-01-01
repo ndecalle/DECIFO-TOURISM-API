@@ -1,8 +1,22 @@
 const Destination = require('../models/Destination');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
 exports.createDestination = async (req, res, next) => {
   try {
-    const dest = new Destination(req.body);
+    const data = { ...req.body };
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream({ folder: 'destinations' }, (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        });
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+      data.image = uploadResult.secure_url;
+    }
+
+    const dest = new Destination(data);
     await dest.save();
     res.status(201).json(dest);
   } catch (err) {
@@ -31,7 +45,19 @@ exports.getDestination = async (req, res, next) => {
 
 exports.updateDestination = async (req, res, next) => {
   try {
-    const dest = await Destination.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const data = { ...req.body };
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream({ folder: 'destinations' }, (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        });
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+      data.image = uploadResult.secure_url;
+    }
+
+    const dest = await Destination.findByIdAndUpdate(req.params.id, data, { new: true });
     if (!dest) return res.status(404).json({ message: 'Not found' });
     res.json(dest);
   } catch (err) {

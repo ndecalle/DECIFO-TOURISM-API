@@ -1,0 +1,21 @@
+{
+  "tours": {
+    "featuredTours": {
+      "musanze-gorilla-trek": {
+        "title": "Gusura Gorila i Musanze",
+        "description": "Inganzo yo gusura gorila mu Pariki y'Igihugu y'Udusozi Twa Volcanos.",
+        "duration": "iminsi 2",
+        "price": "$350",
+        "image": null
+      }
+    }
+  },
+  "destinations": {
+    "musanze": {
+      "name": "Musanze",
+      "description": "Inzira ijya mu Pariki y'Igihugu y'Udusozi",
+      "longDescription": "Musanze ni ahantu hari gorila z'ibiti kandi hari ahantu nyaburanga hatangaje.",
+      "activities": ["Gusura gorila", "Gusura umuco"]
+    }
+  }
+}

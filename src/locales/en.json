@@ -1,0 +1,21 @@
+{
+  "tours": {
+    "featuredTours": {
+      "musanze-gorilla-trek": {
+        "title": "Musanze Gorilla Trek",
+        "description": "Experience gorilla trekking in Volcanoes National Park.",
+        "duration": "2 days",
+        "price": "$350",
+        "image": null
+      }
+    }
+  },
+  "destinations": {
+    "musanze": {
+      "name": "Musanze",
+      "description": "Gateway to Volcanoes National Park",
+      "longDescription": "Musanze is home to the mountain gorillas and offers dramatic volcanic landscapes.",
+      "activities": ["Gorilla trekking", "Cultural visits"]
+    }
+  }
+}
