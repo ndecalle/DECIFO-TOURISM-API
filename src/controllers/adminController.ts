@@ -1,20 +1,24 @@
-const transporter = require('../config/mailer');
-const ContactMessage = require('../models/ContactMessage');
+import { Request, Response, NextFunction } from 'express';
+import transporter from '../config/mailer';
+import ContactMessage from '../models/ContactMessage';
 
-exports.replyToContact = async (req, res, next) => {
+export const replyToContact = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
     const { subject, body: bodyText, template } = req.body;
     const msg = await ContactMessage.findById(id);
-    if (!msg) return res.status(404).json({ message: 'Contact not found' });
+    if (!msg) {
+      res.status(404).json({ message: 'Contact not found' });
+      return;
+    }
 
     // simple template support
-    const templates = {
+    const templates: Record<string, string> = {
       acknowledgement: `Hello ${msg.name},\n\nThank you for contacting us. We have received your message about "${msg.tourInterest || ''}" and will get back to you shortly.\n\nBest regards,\nTeam`,
       bookingInfo: `Hello ${msg.name},\n\nThank you for your booking inquiry. We will follow up with details and next steps.\n\nBest regards,\nTeam`
     };
 
-    const finalBody = template && templates[template] ? templates[template] : (bodyText || templates['acknowledgement']);
+    const finalBody = template && templates[template as string] ? templates[template as string] : (bodyText || templates['acknowledgement']);
 
     await transporter.sendMail({
       from: process.env.SMTP_FROM || process.env.ADMIN_CONTACT_EMAIL,

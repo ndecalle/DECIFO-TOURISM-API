@@ -1,8 +1,10 @@
-const Booking = require('../models/Booking');
-const transporter = require('../config/mailer');
+import { Request, Response, NextFunction } from 'express';
+import Booking from '../models/Booking';
+import transporter from '../config/mailer';
+
 const ADMIN_CONTACT_EMAIL = process.env.ADMIN_CONTACT_EMAIL;
 
-exports.createBooking = async (req, res, next) => {
+export const createBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const b = new Booking(req.body);
     await b.save();
@@ -25,7 +27,7 @@ exports.createBooking = async (req, res, next) => {
   }
 };
 
-exports.listBookings = async (req, res, next) => {
+export const listBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const bookings = await Booking.find().populate('tour').sort({ createdAt: -1 });
     res.json(bookings);
@@ -34,31 +36,40 @@ exports.listBookings = async (req, res, next) => {
   }
 };
 
-exports.getBooking = async (req, res, next) => {
+export const getBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const b = await Booking.findById(req.params.id).populate('tour');
-    if (!b) return res.status(404).json({ message: 'Not found' });
+    if (!b) {
+      res.status(404).json({ message: 'Not found' });
+      return;
+    }
     res.json(b);
   } catch (err) {
     next(err);
   }
 };
 
-exports.updateBooking = async (req, res, next) => {
+export const updateBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const b = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!b) return res.status(404).json({ message: 'Not found' });
+    if (!b) {
+      res.status(404).json({ message: 'Not found' });
+      return;
+    }
     res.json(b);
   } catch (err) {
     next(err);
   }
 };
 
-exports.deleteBooking = async (req, res, next) => {
+export const deleteBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const b = await Booking.findById(req.params.id);
-    if (!b) return res.status(404).json({ message: 'Not found' });
-    await b.remove();
+    if (!b) {
+      res.status(404).json({ message: 'Not found' });
+      return;
+    }
+    await b.deleteOne();
     res.json({ message: 'Deleted' });
   } catch (err) {
     next(err);

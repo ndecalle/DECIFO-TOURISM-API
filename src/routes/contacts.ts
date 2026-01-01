@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import * as controller from '../controllers/contactController';
+import { body } from 'express-validator';
+import validate from '../middleware/validate';
+
 const router = express.Router();
-const controller = require('../controllers/contactController');
-const { body } = require('express-validator');
-const validate = require('../middleware/validate');
 
 router.post(
 	'/',
@@ -18,4 +19,4 @@ router.post(
 router.get('/', controller.listContacts);
 router.put('/:id/status', controller.updateContactStatus);
 
-module.exports = router;
+export default router;

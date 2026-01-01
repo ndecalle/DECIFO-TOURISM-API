@@ -11,4 +11,4 @@ const DestinationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Destination', DestinationSchema);
+export default mongoose.model('Destination', DestinationSchema);

@@ -1,12 +1,19 @@
-const cloudinary = require('cloudinary').v2;
-const { PassThrough } = require('stream');
-const dotenv = require('dotenv');
+import { v2 as cloudinary } from 'cloudinary';
+import { PassThrough } from 'stream';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
 
-function makeUnconfiguredStub() {
+interface CloudinaryStub {
+  uploader: {
+    upload_stream: (opts?: any, cb?: (error?: Error, result?: any) => void) => PassThrough;
+    destroy: (publicId: string) => Promise<any>;
+  };
+}
+
+function makeUnconfiguredStub(): CloudinaryStub {
   const errMsg = 'Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.';
   return {
     uploader: {
@@ -25,9 +32,11 @@ function makeUnconfiguredStub() {
   };
 }
 
+let cloudinaryInstance: any;
+
 if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
   console.warn('Cloudinary env vars are not set. Upload endpoints will return a clear configuration error.');
-  module.exports = makeUnconfiguredStub();
+  cloudinaryInstance = makeUnconfiguredStub();
 } else {
   cloudinary.config({
     cloud_name: CLOUDINARY_CLOUD_NAME,
@@ -36,5 +45,7 @@ if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
     secure: true
   });
 
-  module.exports = cloudinary;
+  cloudinaryInstance = cloudinary;
 }
+
+export default cloudinaryInstance;

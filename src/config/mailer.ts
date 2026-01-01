@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 const host = process.env.SMTP_HOST;
 const port = process.env.SMTP_PORT;
@@ -19,4 +19,4 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-module.exports = transporter;
+export default transporter;

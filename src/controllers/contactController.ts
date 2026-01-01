@@ -1,9 +1,10 @@
-const ContactMessage = require('../models/ContactMessage');
-const transporter = require('../config/mailer');
+import { Request, Response, NextFunction } from 'express';
+import ContactMessage from '../models/ContactMessage';
+import transporter from '../config/mailer';
 
 const ADMIN_CONTACT_EMAIL = process.env.ADMIN_CONTACT_EMAIL;
 
-exports.createContact = async (req, res, next) => {
+export const createContact = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const msg = new ContactMessage(req.body);
     await msg.save();
@@ -27,7 +28,7 @@ exports.createContact = async (req, res, next) => {
   }
 };
 
-exports.listContacts = async (req, res, next) => {
+export const listContacts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const messages = await ContactMessage.find().sort({ createdAt: -1 });
     res.json(messages);
@@ -36,10 +37,13 @@ exports.listContacts = async (req, res, next) => {
   }
 };
 
-exports.updateContactStatus = async (req, res, next) => {
+export const updateContactStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const msg = await ContactMessage.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
-    if (!msg) return res.status(404).json({ message: 'Not found' });
+    if (!msg) {
+      res.status(404).json({ message: 'Not found' });
+      return;
+    }
     res.json(msg);
   } catch (err) {
     next(err);

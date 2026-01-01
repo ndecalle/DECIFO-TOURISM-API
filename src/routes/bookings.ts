@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import * as controller from '../controllers/bookingController';
+import { body } from 'express-validator';
+import validate from '../middleware/validate';
+
 const router = express.Router();
-const controller = require('../controllers/bookingController');
-const { body } = require('express-validator');
-const validate = require('../middleware/validate');
 
 router.post(
 	'/',
@@ -20,4 +21,4 @@ router.get('/:id', controller.getBooking);
 router.put('/:id', controller.updateBooking);
 router.delete('/:id', controller.deleteBooking);
 
-module.exports = router;
+export default router;
