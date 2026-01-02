@@ -1,12 +1,28 @@
 import { Request, Response, NextFunction } from 'express';
 import Booking from '../models/Booking';
+import Tour from '../models/Tour';
 import transporter from '../config/mailer';
 
 const ADMIN_CONTACT_EMAIL = process.env.ADMIN_CONTACT_EMAIL;
 
 export const createBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const b = new Booking(req.body);
+    const body: any = { ...req.body };
+    // If no date provided, attempt to set from the tour's scheduled date
+    if ((!body.date || body.date === '') && body.tour) {
+      try {
+        const tour = await Tour.findById(body.tour);
+        if (tour && tour.date) body.date = tour.date;
+      } catch (e) {
+        // if tour lookup by id fails, try by slug
+        try {
+          const tourBySlug = await Tour.findOne({ slug: body.tour });
+          if (tourBySlug && tourBySlug.date) body.date = tourBySlug.date;
+        } catch (ignore) {}
+      }
+    }
+
+    const b = new Booking(body);
     await b.save();
     // send notification email to admin
     try {

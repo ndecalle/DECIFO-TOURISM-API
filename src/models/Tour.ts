@@ -19,7 +19,8 @@ export interface ITour extends Document {
   notIncluded?: string[];
   featured: boolean;
   tags?: string[];
-  createdAt: Date;
+  createdAt?: Date;
+  date?: Date;
 }
 
 const ItineraryItemSchema: Schema<IItineraryItem> = new mongoose.Schema({
@@ -41,7 +42,7 @@ const TourSchema: Schema<ITour> = new mongoose.Schema({
   notIncluded: [String],
   featured: { type: Boolean, default: false },
   tags: [String],
-  createdAt: { type: Date, default: Date.now }
-});
+  date: { type: Date },
+}, { timestamps: true });
 
 export default mongoose.model<ITour>('Tour', TourSchema);
